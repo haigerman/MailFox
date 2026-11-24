@@ -5,6 +5,20 @@ plugins {
     alias(libs.plugins.tb.app.versioning)
 }
 
+// MailFox: version handling, see file VERSION in the project root
+data class MailFoxVersion(val name: String, val code: Int)
+
+val mailFoxVersion: MailFoxVersion = providers
+    .fileContents(isolated.rootProject.projectDirectory.file("VERSION"))
+    .asText.get().trim()
+    .let { name ->
+        val match = requireNotNull(Regex("""^(\d+)\.(\d+)\.(\d+)$""").matchEntire(name)) {
+            "VERSION must have the format X.Y.Z, but is '$name'"
+        }
+        val (major, minor, patch) = match.destructured
+        MailFoxVersion(name = name, code = major.toInt() * 10000 + minor.toInt() * 100 + patch.toInt())
+    }
+
 val testCoverageEnabled = providers
     .gradleProperty("testCoverageEnabled")
     .isPresent
@@ -13,13 +27,15 @@ android {
     namespace = "com.fsck.k9"
 
     defaultConfig {
-        applicationId = "com.fsck.k9"
-        testApplicationId = "com.fsck.k9.tests"
+        // MailFox: own application ID so MailFox can be installed next to K-9 Mail
+        applicationId = "io.github.haigerman.mailfox"
+        testApplicationId = "io.github.haigerman.mailfox.tests"
 
-        versionCode = 39047
-        versionName = "25.0"
+        // MailFox: version is read from the file VERSION (format X.Y.Z, versionCode = X*10000 + Y*100 + Z)
+        versionCode = mailFoxVersion.code
+        versionName = mailFoxVersion.name
 
-        buildConfigField("String", "CLIENT_INFO_APP_NAME", "\"K-9 Mail\"")
+        buildConfigField("String", "CLIENT_INFO_APP_NAME", "\"MailFox\"")
     }
 
     androidResources {

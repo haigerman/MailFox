@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <!-- Please keep the K-9 Mail format and just localize the mail part if possible.   -->
-    <string name="app_name">K-9 Mail</string>
+<resources>
+    <!-- MailFox: The app name is not translated. -->
+    <string name="app_name" translatable="false">MailFox</string>
 </resources>
