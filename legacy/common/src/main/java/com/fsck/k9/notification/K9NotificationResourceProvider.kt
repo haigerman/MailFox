@@ -16,7 +16,8 @@ class K9NotificationResourceProvider(private val context: Context) : Notificatio
     override val iconArchive: Int = Icons.Outlined.Archive
     override val iconMarkAsSpam: Int = Icons.Outlined.Report
     override val iconStar: Int = Icons.Outlined.Star
-    override val iconNewMail: Int = Icons.Outlined.MarkEmailUnread
+    // MailFox: resource indirection so the app can use its own status bar icon
+    override val iconNewMail: Int = com.fsck.k9.common.R.drawable.notification_icon_new_mail
     override val iconSendingMail: Int = Icons.Outlined.Sync
     override val iconCheckingMail: Int = Icons.Outlined.Sync
     override val iconBackgroundWorkNotification: Int = Icons.Outlined.Bolt

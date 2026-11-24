@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- MailFox app icon: geometric fox head with autumn leaves. Source: docs/mailfox/icon (fox.py). -->
+<vector
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108"
+    >
+
+    <path
+        android:fillColor="#EF7B2D"
+        android:pathData="M36.62,28.09 L46.10,39.15 L54,36.78 L54,75.49 L42.15,62.85 L28.72,56.53 L32.67,44.68 Z"
+        />
+    <path
+        android:fillColor="#D3611C"
+        android:pathData="M71.38,28.09 L61.90,39.15 L54,36.78 L54,75.49 L65.85,62.85 L79.28,56.53 L75.33,44.68 Z"
+        />
+    <path
+        android:fillColor="#A9481A"
+        android:pathData="M54,36.78 L57.95,43.10 L54,52.58 L50.05,43.10 Z"
+        />
+    <path
+        android:fillColor="#4A2614"
+        android:pathData="M38.20,32.04 L44.52,39.94 L35.83,43.89 Z"
+        />
+    <path
+        android:fillColor="#4A2614"
+        android:pathData="M69.80,32.04 L63.48,39.94 L72.17,43.89 Z"
+        />
+    <path
+        android:fillColor="#FFF8EF"
+        android:pathData="M28.72,56.53 L46.10,55.74 L54,60.48 L54,75.49 L42.15,62.85 Z"
+        />
+    <path
+        android:fillColor="#F0E2D2"
+        android:pathData="M79.28,56.53 L61.90,55.74 L54,60.48 L54,75.49 L65.85,62.85 Z"
+        />
+    <path
+        android:fillColor="#2A170E"
+        android:pathData="M42.15,49.42 L48.47,51.40 L44.12,52.98 Z"
+        />
+    <path
+        android:fillColor="#2A170E"
+        android:pathData="M65.85,49.42 L59.53,51.40 L63.88,52.98 Z"
+        />
+    <path
+        android:fillColor="#2A170E"
+        android:pathData="M50.45,70.75 L57.55,70.75 Q58.34,70.75 57.95,71.54 L54.79,75.49 Q54,76.28 53.21,75.49 L50.05,71.54 Q49.66,70.75 50.45,70.75 Z"
+        />
+</vector>

@@ -12,6 +12,6 @@ class K9AppNotificationIconProviderTest {
         val icon = provider.pushNotificationIcon
 
         assertThat(icon)
-            .isEqualTo(app.k9mail.core.ui.legacy.theme2.k9mail.R.drawable.ic_logo_k9_white)
+            .isEqualTo(com.fsck.k9.R.drawable.ic_mailfox_notification)
     }
 }

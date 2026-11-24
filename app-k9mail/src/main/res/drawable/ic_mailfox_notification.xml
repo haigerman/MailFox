@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- MailFox status bar icon: fox head silhouette -->
+<vector
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24"
+    >
+
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:fillType="evenOdd"
+        android:pathData="M5.12,2.62 L8.88,7 L12,6.06 L15.12,7 L18.88,2.62 L20.44,9.19 L22,13.88 L16.69,16.38 L12,21.38 L7.31,16.38 L2,13.88 L3.56,9.19 Z M5.96,5.23 L7.46,7.10 L5.40,8.04 Z M18.04,5.23 L16.54,7.10 L18.60,8.04 Z M6.77,10.70 L10.52,11.87 L7.94,12.81 Z M17.23,10.70 L13.48,11.87 L16.06,12.81 Z"
+        />
+</vector>

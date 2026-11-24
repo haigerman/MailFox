@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    MailFox: Use the fox for all notification icons in the status bar.
+    These aliases override drawables of the same name defined in library modules.
+-->
+<resources>
+    <!-- New message notifications (legacy notification code, see K9NotificationResourceProvider) -->
+    <drawable name="notification_icon_new_mail">@drawable/ic_mailfox_notification</drawable>
+
+    <!-- New notification system (:feature:notification:api) -->
+    <drawable name="ic_new_email">@drawable/ic_mailfox_notification</drawable>
+    <drawable name="ic_notification">@drawable/ic_mailfox_notification</drawable>
+</resources>

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- MailFox: Indirection so the app module can replace the status bar icon used for new message notifications -->
+<resources>
+    <drawable name="notification_icon_new_mail">@drawable/ic_mark_email_unread</drawable>
+</resources>
