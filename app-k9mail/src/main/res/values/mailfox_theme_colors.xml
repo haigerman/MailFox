@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    MailFox color theme "Herbstfuchs" (autumn fox).
+
+    These colors override the K-9 Mail colors defined in :core:ui:legacy:theme2:k9mail (resources of the app module
+    take precedence over library resources). Keep in sync with MailFoxThemeColors.kt.
+
+    Generated with Material Color Utilities from the seed colors
+      primary   #D9661F (fox orange)
+      secondary #5E7A3A (moss green)
+      tertiary  #D9A21B (autumn gold)
+      neutral   warm beige / bark brown
+-->
+<resources>
+    <!-- Light Theme -->
+    <color name="lightPrimary">#9B4000</color>
+    <color name="lightOnPrimary">#FFFFFF</color>
+    <color name="lightPrimaryContainer">#C05408</color>
+    <color name="lightOnPrimaryContainer">#FFFBFF</color>
+
+    <color name="lightSecondary">#4C662B</color>
+    <color name="lightOnSecondary">#FFFFFF</color>
+    <color name="lightSecondaryContainer">#CBEAA0</color>
+    <color name="lightOnSecondaryContainer">#506B2F</color>
+
+    <color name="lightTertiary">#775600</color>
+    <color name="lightOnTertiary">#FFFFFF</color>
+    <color name="lightTertiaryContainer">#966E00</color>
+    <color name="lightOnTertiaryContainer">#FFFBFF</color>
+
+    <color name="lightError">#BA1A1A</color>
+    <color name="lightOnError">#FFFFFF</color>
+    <color name="lightErrorContainer">#FFDAD6</color>
+    <color name="lightOnErrorContainer">#93000A</color>
+
+    <color name="lightSurfaceDim">#E5D8CC</color>
+    <color name="lightSurface">#FFF8F4</color>
+    <color name="lightSurfaceBright">#FFF8F4</color>
+    <color name="lightOnSurface">#211A13</color>
+    <color name="lightOnSurfaceVariant">#544435</color>
+
+    <color name="lightSurfaceContainerLowest">#FFFFFF</color>
+    <color name="lightSurfaceContainerLow">#FFF1E5</color>
+    <color name="lightSurfaceContainer">#F9ECDF</color>
+    <color name="lightSurfaceContainerHigh">#F3E6DA</color>
+    <color name="lightSurfaceContainerHighest">#EDE0D4</color>
+
+    <color name="lightSurfaceInverse">#362F27</color>
+    <color name="lightOnSurfaceInverse">#FCEEE2</color>
+    <color name="lightPrimaryInverse">#FFB691</color>
+
+    <color name="lightOutline">#867462</color>
+    <color name="lightOutlineVariant">#D9C3AF</color>
+
+    <color name="lightPrimaryFixed">#FFDBCB</color>
+    <color name="lightOnPrimaryFixed">#341100</color>
+    <color name="lightPrimaryFixedDim">#FFB691</color>
+    <color name="lightOnPrimaryFixedVariant">#793100</color>
+
+    <color name="lightSecondaryFixed">#CEEDA3</color>
+    <color name="lightOnSecondaryFixed">#102000</color>
+    <color name="lightSecondaryFixedDim">#B2D189</color>
+    <color name="lightOnSecondaryFixedVariant">#354E15</color>
+
+    <color name="lightTertiaryFixed">#FFDEA3</color>
+    <color name="lightOnTertiaryFixed">#261900</color>
+    <color name="lightTertiaryFixedDim">#F5BE48</color>
+    <color name="lightOnTertiaryFixedVariant">#5D4200</color>
+
+    <!-- Dark Theme -->
+    <color name="darkPrimary">#FFB691</color>
+    <color name="darkOnPrimary">#552000</color>
+    <color name="darkPrimaryContainer">#E56F28</color>
+    <color name="darkOnPrimaryContainer">#3C1400</color>
+
+    <color name="darkSecondary">#B2D189</color>
+    <color name="darkOnSecondary">#203701</color>
+    <color name="darkSecondaryContainer">#354E15</color>
+    <color name="darkOnSecondaryContainer">#A1BF79</color>
+
+    <color name="darkTertiary">#F5BE48</color>
+    <color name="darkOnTertiary">#402D00</color>
+    <color name="darkTertiaryContainer">#B9890F</color>
+    <color name="darkOnTertiaryContainer">#2C1E00</color>
+
+    <color name="darkError">#FFB4AB</color>
+    <color name="darkOnError">#690005</color>
+    <color name="darkErrorContainer">#93000A</color>
+    <color name="darkOnErrorContainer">#FFDAD6</color>
+
+    <color name="darkSurfaceDim">#18120C</color>
+    <color name="darkSurface">#18120C</color>
+    <color name="darkSurfaceBright">#3F3830</color>
+    <color name="darkOnSurface">#EDE0D4</color>
+    <color name="darkOnSurfaceVariant">#D9C3AF</color>
+
+    <color name="darkSurfaceContainerLowest">#130D07</color>
+    <color name="darkSurfaceContainerLow">#211A13</color>
+    <color name="darkSurfaceContainer">#251E17</color>
+    <color name="darkSurfaceContainerHigh">#302921</color>
+    <color name="darkSurfaceContainerHighest">#3B332B</color>
+
+    <color name="darkSurfaceInverse">#EDE0D4</color>
+    <color name="darkOnSurfaceInverse">#362F27</color>
+    <color name="darkPrimaryInverse">#9F4200</color>
+
+    <color name="darkOutline">#A18D7B</color>
+    <color name="darkOutlineVariant">#544435</color>
+
+    <color name="darkPrimaryFixed">#FFDBCB</color>
+    <color name="darkOnPrimaryFixed">#341100</color>
+    <color name="darkPrimaryFixedDim">#FFB691</color>
+    <color name="darkOnPrimaryFixedVariant">#793100</color>
+
+    <color name="darkSecondaryFixed">#CEEDA3</color>
+    <color name="darkOnSecondaryFixed">#102000</color>
+    <color name="darkSecondaryFixedDim">#B2D189</color>
+    <color name="darkOnSecondaryFixedVariant">#354E15</color>
+
+    <color name="darkTertiaryFixed">#FFDEA3</color>
+    <color name="darkOnTertiaryFixed">#261900</color>
+    <color name="darkTertiaryFixedDim">#F5BE48</color>
+    <color name="darkOnTertiaryFixedVariant">#5D4200</color>
+</resources>
