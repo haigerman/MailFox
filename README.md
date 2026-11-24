@@ -33,11 +33,15 @@ hinzufügen – dann kommen Updates automatisch.
 K-9 Mail: *Einstellungen → Einstellungen exportieren*, dann in MailFox: *Einstellungen → Einstellungen importieren*.
 Passwörter werden dabei nicht übertragen und müssen in MailFox neu eingegeben werden.
 
-### Einschränkung: OAuth-Anmeldung (Gmail, Outlook/Microsoft, Yahoo, AOL, Fastmail)
+### Kein OAuth
 
-Die Anmeldung per „Mit Google/Microsoft anmelden“ ist bei diesen Anbietern an die App-ID und den Signaturschlüssel von
-K-9 Mail gebunden und funktioniert in MailFox **nicht**. Konten mit Benutzername/Passwort (bzw. App-Passwort) – z. B.
-GMX, Web.de, Posteo, mailbox.org, IONOS, eigener Server – funktionieren ganz normal.
+MailFox unterstützt keine OAuth-Anmeldung („Mit Google/Microsoft anmelden“). Die OAuth-Zugänge von K-9 Mail sind an
+dessen App-ID und Signaturschlüssel gebunden und funktionieren in MailFox ohnehin nicht. Deshalb ist OAuth ausgebaut:
+keine OAuth-Anbieter, keine Auswahl „OAuth 2.0“ bei den Server-Einstellungen und keine OAuth-Weiterleitung im Manifest.
+
+Konten mit Benutzername/Passwort (bzw. App-Passwort) – z. B. GMX, Web.de, Posteo, mailbox.org, IONOS, eigener Server –
+funktionieren ganz normal. Werden K-9-Einstellungen mit einem OAuth-Konto importiert, meldet MailFox „OAuth wird nicht
+unterstützt“; das Konto lässt sich in den Server-Einstellungen auf Passwort-Anmeldung umstellen.
 
 ## Neue Version veröffentlichen
 
@@ -69,6 +73,7 @@ Typische Konflikte und wie man sie löst:
 |---|---|
 | `.github/workflows/*`, `.github/dependabot.yml` | gelöscht lassen (`git rm`) |
 | `app-k9mail/src/main/res/values-*/strings.xml` | gelöscht lassen (App-Name wird nicht übersetzt) |
+| `app-k9mail/src/{debug,release}/kotlin/app/k9mail/auth/K9OAuthConfigurationFactory.kt` | gelöscht lassen (kein OAuth) |
 | `app-k9mail/build.gradle.kts` (versionCode/versionName) | MailFox-Variante behalten |
 | `README.md` | MailFox-Variante behalten |
 

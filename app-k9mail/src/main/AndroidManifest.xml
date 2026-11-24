@@ -13,6 +13,12 @@
         tools:replace="android:theme"
         >
 
+        <!-- MailFox: OAuth 2.0 is not supported. Remove the (exported) OAuth redirect receiver. -->
+        <activity
+            android:name="net.openid.appauth.RedirectUriReceiverActivity"
+            tools:node="remove"
+            />
+
         <activity
             android:name="com.fsck.k9.ui.settings.account.OpenPgpAppSelectDialog"
             android:configChanges="locale"

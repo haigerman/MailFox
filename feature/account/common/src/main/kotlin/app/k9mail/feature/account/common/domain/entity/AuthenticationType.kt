@@ -33,7 +33,8 @@ enum class AuthenticationType(
         val DEFAULT = PasswordCleartext
         fun all() = entries.toImmutableList()
 
-        fun outgoing() = all()
+        // MailFox: OAuth 2.0 is not supported
+        fun outgoing() = all().filter { it != OAuth2 }.toImmutableList()
     }
 }
 

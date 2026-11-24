@@ -1,6 +1,6 @@
 package app.k9mail
 
-import app.k9mail.auth.K9OAuthConfigurationFactory
+import app.k9mail.auth.MailFoxOAuthConfigurationFactory
 import app.k9mail.dev.developmentModuleAdditions
 import app.k9mail.feature.featureModule
 import app.k9mail.feature.widget.shortcut.LauncherShortcutActivity
@@ -29,7 +29,7 @@ val appModule = module {
     single(named("ClientInfoAppName")) { BuildConfig.CLIENT_INFO_APP_NAME }
     single(named("ClientInfoAppVersion")) { BuildConfig.VERSION_NAME }
     single<AppConfig> { appConfig }
-    single<OAuthConfigurationFactory> { K9OAuthConfigurationFactory() }
+    single<OAuthConfigurationFactory> { MailFoxOAuthConfigurationFactory() }
 
     developmentModuleAdditions()
 }

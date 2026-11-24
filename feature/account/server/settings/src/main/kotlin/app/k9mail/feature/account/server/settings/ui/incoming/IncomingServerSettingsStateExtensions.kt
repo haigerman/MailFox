@@ -18,7 +18,7 @@ internal val IncomingProtocolType.allowedAuthenticationTypes: List<Authenticatio
                 AuthenticationType.PasswordCleartext,
                 AuthenticationType.PasswordEncrypted,
                 AuthenticationType.ClientCertificate,
-                AuthenticationType.OAuth2,
+                // MailFox: OAuth 2.0 is not supported
             )
         }
 
