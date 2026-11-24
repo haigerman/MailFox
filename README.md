@@ -52,8 +52,8 @@ unterstützt“; das Konto lässt sich in den Server-Einstellungen auf Passwort-
 `versionCode` = `X*10000 + Y*100 + Z`. Die Hauptversion folgt der zugrunde liegenden K-9-Version
 (MailFox 25.0.x basiert auf K-9 Mail 25.0).
 
-Benötigte Repository-Secrets (wie bei First Light): `SIGNING_KEYSTORE_BASE64`, `SIGNING_KEYSTORE_PASSWORD`,
-`SIGNING_KEY_ALIAS`, `SIGNING_KEY_PASSWORD`.
+Benötigte Repository-Secrets (wie bei den anderen Apps): `KEYSTORE_BASE64`, `KEYSTORE_PASSWORD`, `KEY_ALIAS`,
+`KEY_PASSWORD` (alternativ mit Präfix `SIGNING_`).
 
 ## Upstream-Updates übernehmen
 

@@ -4,8 +4,9 @@
 # Auslöser: Änderung der Datei VERSION auf main, oder manuell unter
 # Actions → MailFox Release → "Run workflow".
 #
-# Benötigte Repository-Secrets (wie bei First Light):
-#   SIGNING_KEYSTORE_BASE64, SIGNING_KEYSTORE_PASSWORD, SIGNING_KEY_ALIAS, SIGNING_KEY_PASSWORD
+# Benötigte Repository-Secrets (wie bei den anderen Apps):
+#   KEYSTORE_BASE64, KEYSTORE_PASSWORD, KEY_ALIAS, KEY_PASSWORD
+#   (alternativ mit Präfix SIGNING_, z. B. SIGNING_KEYSTORE_BASE64)
 name: MailFox Release
 
 on:
@@ -52,14 +53,14 @@ jobs:
 
       - name: Signaturschlüssel bereitstellen
         env:
-          SIGNING_KEYSTORE_BASE64: ${{ secrets.SIGNING_KEYSTORE_BASE64 }}
-          SIGNING_KEYSTORE_PASSWORD: ${{ secrets.SIGNING_KEYSTORE_PASSWORD }}
-          SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
-          SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
+          SIGNING_KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 || secrets.SIGNING_KEYSTORE_BASE64 }}
+          SIGNING_KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD || secrets.SIGNING_KEYSTORE_PASSWORD }}
+          SIGNING_KEY_ALIAS: ${{ secrets.KEY_ALIAS || secrets.SIGNING_KEY_ALIAS }}
+          SIGNING_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD || secrets.SIGNING_KEY_PASSWORD }}
         run: |
           for name in SIGNING_KEYSTORE_BASE64 SIGNING_KEYSTORE_PASSWORD SIGNING_KEY_ALIAS SIGNING_KEY_PASSWORD; do
             if [ -z "${!name}" ]; then
-              echo "Secret $name fehlt" >&2
+              echo "Secret für $name fehlt (KEYSTORE_BASE64, KEYSTORE_PASSWORD, KEY_ALIAS, KEY_PASSWORD)" >&2
               exit 1
             fi
           done
