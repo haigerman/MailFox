@@ -90,7 +90,8 @@ def svg(include_bg=True, include_fox=True, scale=0.79, mask=None):
     out.append('</svg>')
     return "\n".join(out)
 
-open("full.svg", "w").write(svg())
-open("circle.svg", "w").write(svg(mask="circle"))
-open("squircle.svg", "w").write(svg(mask="squircle"))
-json.dump({"fox": fox, "leaves": leaves}, open("geometry.json", "w"))
+if __name__ == "__main__":
+    open("full.svg", "w").write(svg())
+    open("circle.svg", "w").write(svg(mask="circle"))
+    open("squircle.svg", "w").write(svg(mask="squircle"))
+    json.dump({"fox": fox, "leaves": leaves}, open("geometry.json", "w"))

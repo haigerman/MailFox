@@ -1,4 +1,4 @@
-<img src="docs/mailfox/icon/mailfox_icon.png" width="128" alt="App-Icon: Fuchskopf mit Herbstlaub">
+<img src="docs/mailfox/icon/mailfox_icon.png" width="128" alt="App-Icon: Fuchskopf mit Brief-Plakette">
 
 # MailFox
 
@@ -14,9 +14,9 @@ MailFox hat eine eigene Paket-ID (`io.github.haigerman.mailfox`) und lässt sich
 - **Farbthema „Herbstfuchs“** (hell und dunkel): Fuchs-Orange, Moosgrün und Herbstgold auf warmem Creme bzw. dunklem
   Rindenbraun – in den klassischen Ansichten und in den Compose-Bildschirmen. Auch die Farben der Wischgesten in der
   Nachrichtenliste und der Stern sind herbstlich.
-- **App-Icon:** geometrischer Fuchskopf vor Waldgrün mit Ahornblättern (adaptives Icon, inkl. einfarbiger Variante für
+- **App-Icon:** geometrischer Fuchskopf mit oranger Brief-Plakette vor dunklem Grünverlauf (adaptives Icon, inkl. einfarbiger Variante für
   „Designte Symbole“ ab Android 13)
-- **Statusleisten-Icon:** Fuchskopf-Silhouette für Benachrichtigungen (neue Nachrichten, Push-Dienst usw.)
+- **Statusleisten-Icon:** Fuchskopf-Silhouette mit Brief-Plakette für Benachrichtigungen (neue Nachrichten, Push-Dienst usw.)
 - **Posteingang wechseln per Tipp auf den Titel:** Ein Tipp auf „Posteingang“ oben in der Nachrichtenliste schaltet
   der Reihe nach durch – gemeinsamer Posteingang (falls aktiviert) → Posteingang Konto 1 → Konto 2 → … → wieder von
   vorne. Die Reihenfolge entspricht der Kontenliste im Menü.
@@ -82,7 +82,8 @@ Dateien, damit Merges möglichst konfliktfrei bleiben:
 
 - Farben: `app-k9mail/src/main/res/values/mailfox_theme_colors.xml` und
   `app-k9mail/src/main/kotlin/app/k9mail/provider/MailFoxThemeColors.kt` (erzeugt mit `docs/mailfox/theme_colors.mjs`)
-- Icons: `app-k9mail/src/main/res/drawable*/` (erzeugt mit `docs/mailfox/icon/android.py`)
+- Icons: `app-k9mail/src/main/res/drawable*/` (erzeugt mit
+  `python3 docs/mailfox/icon/android.py app-k9mail/src/main/res components/ui/bolt/src/commonMain/composeResources/drawable/bolt_k9mail_logo.xml`)
 - Posteingang-Wechsel: `legacy/ui/legacy/src/main/java/com/fsck/k9/activity/InboxCycler.kt` und `MessageHomeActivity.kt`
 
 ## Bauen
