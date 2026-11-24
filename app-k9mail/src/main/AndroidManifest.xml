@@ -16,6 +16,7 @@
         <!-- MailFox: OAuth 2.0 is not supported. Remove the (exported) OAuth redirect receiver. -->
         <activity
             android:name="net.openid.appauth.RedirectUriReceiverActivity"
+            tools:ignore="MissingClass"
             tools:node="remove"
             />
 
