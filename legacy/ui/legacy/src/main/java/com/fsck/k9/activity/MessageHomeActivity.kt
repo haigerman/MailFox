@@ -189,6 +189,7 @@ open class MessageHomeActivity :
 
         initializeActionBar()
         initializeDrawer()
+        initializeInboxSwitching()
 
         if (!decodeExtras(intent)) {
             return
@@ -732,6 +733,59 @@ open class MessageHomeActivity :
 
             override fun onDrawerSlide(drawerView: View, slideOffset: Float) = Unit
         }
+    }
+
+    /**
+     * MailFox: Tapping the title in the toolbar switches to the next inbox, in the same order as the account list in
+     * the navigation drawer (Unified Inbox → inbox of account 1 → inbox of account 2 → … → Unified Inbox).
+     */
+    private fun initializeInboxSwitching() {
+        if (!isDrawerEnabled) return
+
+        findViewById<View>(R.id.toolbarTitleContainer)?.setOnClickListener { switchToNextInbox() }
+    }
+
+    private fun switchToNextInbox() {
+        val nextEntry = findNextInbox() ?: return
+
+        collapseSearchView()
+        messageListFragment?.finishActionMode()
+
+        if (nextEntry == UnifiedDisplayAccount.UNIFIED_ACCOUNT_ID) {
+            openUnifiedFolders()
+        } else {
+            openInbox(accountUuid = nextEntry)
+        }
+    }
+
+    private fun findNextInbox(): String? {
+        val search = search
+        val currentEntry = when {
+            search == null || displayMode == DisplayMode.MESSAGE_VIEW || isAdditionalMessageListDisplayed -> null
+            search.isUnifiedFolders -> UnifiedDisplayAccount.UNIFIED_ACCOUNT_ID
+            !search.searchAllAccounts() && search.accountUuids.size == 1 -> search.accountUuids.first()
+            // Don't switch away from search results or other special views
+            else -> null
+        } ?: return null
+
+        val entries = InboxCycler.entries(
+            unifiedEntryId = UnifiedDisplayAccount.UNIFIED_ACCOUNT_ID,
+            showUnifiedInbox = generalSettingsManager.getConfig().display.inboxSettings.isShowUnifiedInbox,
+            accountUuids = accountManager.getAccounts().map { it.uuid },
+        )
+
+        return InboxCycler.next(entries, currentEntry)
+    }
+
+    private fun openInbox(accountUuid: String) {
+        val account = accountManager.getAccount(accountUuid) ?: return
+        val folderId = account.inboxFolderId ?: defaultFolderProvider.getDefaultFolder(account)
+
+        val inboxSearch = LocalMessageSearch().apply {
+            addAllowedFolder(folderId)
+            addAccountUuid(account.uuid)
+        }
+        actionDisplaySearch(this, inboxSearch, noThreading = false, newTask = false)
     }
 
     private fun openFolder(accountId: String, folderId: Long) {
