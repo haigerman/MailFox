@@ -17,10 +17,35 @@ MailFox hat eine eigene Paket-ID (`io.github.haigerman.mailfox`) und lässt sich
 - **App-Icon:** geometrischer Fuchskopf mit oranger Brief-Plakette vor dunklem Grünverlauf (adaptives Icon, inkl. einfarbiger Variante für
   „Designte Symbole“ ab Android 13)
 - **Statusleisten-Icon:** Fuchskopf-Silhouette mit Brief-Plakette für Benachrichtigungen (neue Nachrichten, Push-Dienst usw.)
+- **Eingebaute PGP-Verschlüsselung** – ohne Zusatz-App wie OpenKeychain, siehe unten
 - **Posteingang wechseln per Tipp auf den Titel:** Ein Tipp auf „Posteingang“ oben in der Nachrichtenliste schaltet
   der Reihe nach durch – gemeinsamer Posteingang (falls aktiviert) → Posteingang Konto 1 → Konto 2 → … → wieder von
   vorne. Die Reihenfolge entspricht der Kontenliste im Menü.
 - App-Name „MailFox“
+
+## PGP-Verschlüsselung
+
+**Einrichten:** *Einstellungen → Mailverschlüsselung mit PGP einrichten → „PGP einrichten“* beim gewünschten Konto.
+MailFox erzeugt ein Schlüsselpaar (Ed25519/X25519) und veröffentlicht den öffentlichen Schlüssel auf
+[keys.openpgp.org](https://keys.openpgp.org). Von dort kommt eine Bestätigungs-Mail – erst nach dem Klick auf den Link
+darin ist der Schlüssel über die E-Mail-Adresse auffindbar. Der private Schlüssel bleibt auf dem Gerät und ist mit einem
+Schlüssel aus dem Android Keystore verschlüsselt gespeichert.
+
+**Verschlüsselt senden:** Im Mail-Editor gibt es neben dem Senden-Pfeil einen Senden-Pfeil mit Schloss. MailFox sucht
+dann für jeden Empfänger den aktuellsten gültigen Schlüssel, verschlüsselt die Nachricht (PGP/MIME, inkl. Anhänge;
+Bcc-Empfänger bleiben anonym) und signiert sie mit dem eigenen Schlüssel. Fehlt für einen Empfänger ein Schlüssel, kann
+man unverschlüsselt senden oder zum Editor zurückkehren. Beim Antworten auf eine verschlüsselte Nachricht fragt MailFox
+auch beim normalen Senden-Pfeil nach, ob verschlüsselt werden soll.
+
+Gesucht wird nur in Quellen, bei denen die E-Mail-Adresse geprüft ist: im **Web Key Directory** der Empfänger-Domain
+(z. B. mailbox.org, Posteo, Proton) und auf **keys.openpgp.org**. Schlüsselserver ohne Adressprüfung (z. B.
+keyserver.ubuntu.com) werden bewusst nicht genutzt – dort kann jeder einen Schlüssel mit fremder Adresse hochladen.
+
+**Empfangen:** Verschlüsselte Nachrichten an ein eingerichtetes Konto werden automatisch entschlüsselt
+(PGP/MIME und PGP/Inline), Signaturen werden geprüft.
+
+**Wichtig:** Der private Schlüssel ist nicht in der Einstellungs-Sicherung enthalten. Geht das Gerät verloren oder wird
+MailFox deinstalliert, lassen sich bereits verschlüsselte Nachrichten nicht mehr lesen.
 
 ## Installation und Updates
 
