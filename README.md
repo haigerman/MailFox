@@ -44,8 +44,10 @@ keyserver.ubuntu.com) werden bewusst nicht genutzt – dort kann jeder einen Sch
 **Empfangen:** Verschlüsselte Nachrichten an ein eingerichtetes Konto werden automatisch entschlüsselt
 (PGP/MIME und PGP/Inline), Signaturen werden geprüft.
 
-**Wichtig:** Der private Schlüssel ist nicht in der Einstellungs-Sicherung enthalten. Geht das Gerät verloren oder wird
-MailFox deinstalliert, lassen sich bereits verschlüsselte Nachrichten nicht mehr lesen.
+**Schlüssel sichern:** Der private Schlüssel ist nicht in der Einstellungs-Sicherung enthalten. Unter *Einstellungen →
+Mailverschlüsselung mit PGP einrichten → „Privaten Schlüssel exportieren“* lässt er sich als passwortgeschützte Datei
+(`.asc`) speichern, z. B. in der Cloud oder auf dem PC. Die Datei kann in Thunderbird, OpenKeychain oder GnuPG
+importiert werden. Ohne Sicherung lassen sich verschlüsselte Nachrichten nach einem Geräteverlust nicht mehr lesen.
 
 ## Installation und Updates
 
