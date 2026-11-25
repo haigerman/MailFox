@@ -11,4 +11,15 @@
     <string name="mailfox_pgp_settings_status_verification_pending">Key created. keys.openpgp.org has sent a confirmation email to %s. Please open the link in it so that others can find your key.</string>
     <string name="mailfox_pgp_settings_status_publish_failed">Key created, but it could not be published (no connection?). Please try \"Publish again\" later.</string>
     <string name="mailfox_pgp_settings_status_failed">Setup failed.</string>
+    <string name="mailfox_pgp_export_button">Export private key</string>
+    <string name="mailfox_pgp_export_dialog_title">Export private key</string>
+    <string name="mailfox_pgp_export_dialog_text">The exported file is protected with this password. You need it to import the key into another program (e.g. Thunderbird, OpenKeychain, GnuPG). Keep the file and the password in a safe place – anyone who has both can read your encrypted messages.</string>
+    <string name="mailfox_pgp_export_dialog_confirm">Export</string>
+    <string name="mailfox_pgp_export_passphrase_label">Password</string>
+    <string name="mailfox_pgp_export_confirmation_label">Repeat password</string>
+    <string name="mailfox_pgp_export_error_too_short">The password must have at least 8 characters.</string>
+    <string name="mailfox_pgp_export_error_mismatch">The passwords don\'t match.</string>
+    <string name="mailfox_pgp_export_status_in_progress">Exporting key…</string>
+    <string name="mailfox_pgp_export_status_done">Private key exported.</string>
+    <string name="mailfox_pgp_export_status_failed">Export failed.</string>
 </resources>

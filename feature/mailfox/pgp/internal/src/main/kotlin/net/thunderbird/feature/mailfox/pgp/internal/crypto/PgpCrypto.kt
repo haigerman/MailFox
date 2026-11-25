@@ -14,6 +14,7 @@ import org.pgpainless.encryption_signing.EncryptionOptions
 import org.pgpainless.encryption_signing.ProducerOptions
 import org.pgpainless.encryption_signing.SigningOptions
 import org.pgpainless.key.protection.SecretKeyRingProtector
+import org.pgpainless.util.Passphrase
 
 /**
  * MailFox: OpenPGP operations based on PGPainless.
@@ -46,6 +47,24 @@ internal object PgpCrypto {
     fun readCertificates(data: ByteArray): List<PGPPublicKeyRing> {
         return runCatching { PGPainless.readKeyRing().publicKeyRingCollection(data).toList() }.getOrDefault(emptyList())
     }
+
+    /**
+     * Returns a copy of [secretKeyRing] that is protected with [passphrase] (for export).
+     */
+    fun protectWithPassphrase(secretKeyRing: PGPSecretKeyRing, passphrase: CharArray): PGPSecretKeyRing {
+        val newPassphrase = Passphrase(passphrase.copyOf())
+        try {
+            return PGPainless.modifyKeyRing(secretKeyRing)
+                .changePassphraseFromOldPassphrase(Passphrase.emptyPassphrase())
+                .withSecureDefaultSettings()
+                .toNewPassphrase(newPassphrase)
+                .done()
+        } finally {
+            newPassphrase.clear()
+        }
+    }
+
+    fun armorSecretKey(secretKeyRing: PGPSecretKeyRing): String = PGPainless.asciiArmor(secretKeyRing)
 
     fun readSecretKeyRing(data: ByteArray): PGPSecretKeyRing? {
         return runCatching { PGPainless.readKeyRing().secretKeyRing(data) }.getOrNull()

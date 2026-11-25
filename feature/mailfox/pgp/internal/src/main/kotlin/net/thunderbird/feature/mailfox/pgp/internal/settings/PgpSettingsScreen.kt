@@ -1,5 +1,7 @@
 package net.thunderbird.feature.mailfox.pgp.internal.settings
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,6 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -18,10 +21,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import net.thunderbird.components.ui.bolt.atom.CircularProgressIndicator
 import net.thunderbird.components.ui.bolt.atom.button.ButtonFilled
+import net.thunderbird.components.ui.bolt.atom.button.ButtonOutlined
 import net.thunderbird.components.ui.bolt.atom.card.CardOutlined
 import net.thunderbird.components.ui.bolt.atom.text.TextBodyMedium
 import net.thunderbird.components.ui.bolt.atom.text.TextBodySmall
 import net.thunderbird.components.ui.bolt.atom.text.TextTitleMedium
+import net.thunderbird.components.ui.bolt.atom.textfield.TextFieldOutlinedPassword
+import net.thunderbird.components.ui.bolt.organism.AlertDialog
 import net.thunderbird.components.ui.bolt.organism.TopAppBarWithBackButton
 import net.thunderbird.components.ui.bolt.template.Scaffold
 import net.thunderbird.components.ui.bolt.theme.BoltTheme
@@ -33,6 +39,22 @@ internal fun PgpSettingsScreen(
     onBack: () -> Unit,
 ) {
     val state by viewModel.state.collectAsState()
+
+    val createExportFile = rememberLauncherForActivityResult(
+        ActivityResultContracts.CreateDocument(EXPORT_MIME_TYPE),
+    ) { uri -> viewModel.event(PgpSettingsEvent.ExportFileSelected(uri)) }
+
+    LaunchedEffect(viewModel) {
+        viewModel.effects.collect { effect ->
+            when (effect) {
+                is PgpSettingsEffect.CreateExportFile -> createExportFile.launch(effect.fileName)
+            }
+        }
+    }
+
+    state.exportDialog?.let { dialog ->
+        PgpExportDialog(dialog = dialog, onEvent = viewModel::event)
+    }
 
     Scaffold(
         topBar = {
@@ -59,6 +81,7 @@ internal fun PgpSettingsScreen(
                 PgpAccountCard(
                     account = account,
                     onSetUpClick = { viewModel.event(PgpSettingsEvent.SetUpClicked(account.accountUuid)) },
+                    onExportClick = { viewModel.event(PgpSettingsEvent.ExportClicked(account.accountUuid)) },
                     modifier = Modifier.padding(horizontal = BoltTheme.spacings.double),
                 )
             }
@@ -70,6 +93,7 @@ internal fun PgpSettingsScreen(
 private fun PgpAccountCard(
     account: PgpAccountItem,
     onSetUpClick: () -> Unit,
+    onExportClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     CardOutlined(modifier = modifier.fillMaxWidth()) {
@@ -112,8 +136,63 @@ private fun PgpAccountCard(
                     )
                 }
             }
+
+            if (account.fingerprint != null) {
+                ButtonOutlined(
+                    text = stringResource(R.string.mailfox_pgp_export_button),
+                    onClick = onExportClick,
+                    enabled = account.exportStatus != PgpExportStatus.InProgress,
+                )
+                exportStatusText(account.exportStatus)?.let { TextBodyMedium(text = it) }
+            }
         }
     }
+}
+
+@Composable
+private fun PgpExportDialog(
+    dialog: PgpExportDialogState,
+    onEvent: (PgpSettingsEvent) -> Unit,
+) {
+    AlertDialog(
+        title = stringResource(R.string.mailfox_pgp_export_dialog_title),
+        confirmText = stringResource(R.string.mailfox_pgp_export_dialog_confirm),
+        onConfirmClick = { onEvent(PgpSettingsEvent.ExportConfirmed) },
+        onDismissRequest = { onEvent(PgpSettingsEvent.ExportDialogDismissed) },
+        dismissText = stringResource(android.R.string.cancel),
+        onDismissClick = { onEvent(PgpSettingsEvent.ExportDialogDismissed) },
+    ) {
+        Column(verticalArrangement = Arrangement.spacedBy(BoltTheme.spacings.default)) {
+            TextBodyMedium(text = stringResource(R.string.mailfox_pgp_export_dialog_text))
+            TextFieldOutlinedPassword(
+                value = dialog.passphrase,
+                onValueChange = { onEvent(PgpSettingsEvent.ExportPassphraseChanged(it)) },
+                label = stringResource(R.string.mailfox_pgp_export_passphrase_label),
+                hasError = dialog.error == PgpExportDialogError.TOO_SHORT,
+                modifier = Modifier.fillMaxWidth(),
+            )
+            TextFieldOutlinedPassword(
+                value = dialog.confirmation,
+                onValueChange = { onEvent(PgpSettingsEvent.ExportConfirmationChanged(it)) },
+                label = stringResource(R.string.mailfox_pgp_export_confirmation_label),
+                hasError = dialog.error == PgpExportDialogError.MISMATCH,
+                modifier = Modifier.fillMaxWidth(),
+            )
+            when (dialog.error) {
+                PgpExportDialogError.TOO_SHORT -> stringResource(R.string.mailfox_pgp_export_error_too_short)
+                PgpExportDialogError.MISMATCH -> stringResource(R.string.mailfox_pgp_export_error_mismatch)
+                null -> null
+            }?.let { TextBodySmall(text = it, color = BoltTheme.colors.error) }
+        }
+    }
+}
+
+@Composable
+private fun exportStatusText(status: PgpExportStatus): String? = when (status) {
+    PgpExportStatus.None -> null
+    PgpExportStatus.InProgress -> stringResource(R.string.mailfox_pgp_export_status_in_progress)
+    PgpExportStatus.Done -> stringResource(R.string.mailfox_pgp_export_status_done)
+    PgpExportStatus.Failed -> stringResource(R.string.mailfox_pgp_export_status_failed)
 }
 
 @Composable
@@ -140,3 +219,4 @@ private fun formatFingerprint(fingerprint: String): String = fingerprint.chunked
 
 private const val FINGERPRINT_GROUP_SIZE = 4
 private const val PROGRESS_SIZE = 24
+private const val EXPORT_MIME_TYPE = "application/pgp-keys"

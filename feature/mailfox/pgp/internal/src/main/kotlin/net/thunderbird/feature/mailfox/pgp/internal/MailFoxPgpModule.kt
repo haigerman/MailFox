@@ -7,6 +7,8 @@ import net.thunderbird.feature.mailfox.pgp.internal.keyserver.KeyServerClient
 import net.thunderbird.feature.mailfox.pgp.internal.keyserver.OkHttpKeyServerClient
 import net.thunderbird.feature.mailfox.pgp.internal.keyserver.RecipientKeyFinder
 import net.thunderbird.feature.mailfox.pgp.internal.provider.OpenPgpRequestHandler
+import net.thunderbird.feature.mailfox.pgp.internal.settings.ContentResolverPgpKeyFileWriter
+import net.thunderbird.feature.mailfox.pgp.internal.settings.PgpKeyFileWriter
 import net.thunderbird.feature.mailfox.pgp.internal.settings.PgpSettingsActivityLauncher
 import net.thunderbird.feature.mailfox.pgp.internal.settings.PgpSettingsViewModel
 import net.thunderbird.feature.mailfox.pgp.internal.storage.AndroidKeystoreCipher
@@ -40,5 +42,7 @@ val featureMailFoxPgpModule = module {
     }
     single { OpenPgpRequestHandler(keyStore = get(), logger = get()) }
     single<MailFoxPgpSettingsLauncher> { PgpSettingsActivityLauncher() }
-    viewModel { PgpSettingsViewModel(accountSetup = get()) }
+    single { PgpKeyExporter(keyStore = get()) }
+    single<PgpKeyFileWriter> { ContentResolverPgpKeyFileWriter(androidContext()) }
+    viewModel { PgpSettingsViewModel(accountSetup = get(), keyExporter = get(), fileWriter = get()) }
 }
