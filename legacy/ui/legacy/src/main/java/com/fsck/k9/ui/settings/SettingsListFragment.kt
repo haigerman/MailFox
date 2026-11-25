@@ -32,6 +32,8 @@ import net.thunderbird.core.android.account.LegacyAccountDto
 import net.thunderbird.core.common.provider.BrandNameProvider
 import net.thunderbird.feature.funding.api.FundingManager
 import net.thunderbird.feature.funding.api.FundingType
+import net.thunderbird.feature.mailfox.pgp.MailFoxPgpSettingsLauncher
+import org.koin.android.ext.android.getKoin
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import app.k9mail.feature.settings.importing.R as SettingsImportR
@@ -40,6 +42,9 @@ class SettingsListFragment : Fragment(), ItemTouchCallback {
     private val viewModel: SettingsViewModel by viewModel()
     private val fundingManager: FundingManager by inject()
     private val brandNameProvider: BrandNameProvider by inject()
+
+    // MailFox: only available in MailFox (not in the Thunderbird app variant)
+    private val mailFoxPgpSettingsLauncher: MailFoxPgpSettingsLauncher? by lazy { getKoin().getOrNull() }
 
     private lateinit var itemAdapter: ItemAdapter<GenericItem>
 
@@ -109,6 +114,16 @@ class SettingsListFragment : Fragment(), ItemTouchCallback {
                     navigationAction = R.id.action_settingsListScreen_to_addAccountScreen,
                     icon = Icons.Outlined.Add,
                 )
+            }
+
+            mailFoxPgpSettingsLauncher?.let { launcher ->
+                addSection(title = getString(R.string.mailfox_pgp_settings_category)) {
+                    addIntent(
+                        text = getString(R.string.mailfox_pgp_settings_action),
+                        icon = Icons.Outlined.Lock,
+                        intent = launcher.createIntent(requireContext()),
+                    )
+                }
             }
 
             addSection(title = getString(R.string.settings_list_backup_category)) {
