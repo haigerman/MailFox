@@ -1,4 +1,4 @@
-<img src="docs/mailfox/icon/mailfox_icon.png" width="128" alt="App-Icon: Fuchskopf mit Brief-Plakette">
+<img src="docs/mailfox/icon/mailfox_icon.png" width="128" alt="App-Icon: Metall-Fuchs mit Briefumschlag und Schloss">
 
 # MailFox
 
@@ -14,9 +14,9 @@ MailFox hat eine eigene Paket-ID (`io.github.haigerman.mailfox`) und lässt sich
 - **Farbthema „Herbstfuchs“** (hell und dunkel): Fuchs-Orange, Moosgrün und Herbstgold auf warmem Creme bzw. dunklem
   Rindenbraun – in den klassischen Ansichten und in den Compose-Bildschirmen. Auch die Farben der Wischgesten in der
   Nachrichtenliste und der Stern sind herbstlich.
-- **App-Icon:** geometrischer Fuchskopf mit oranger Brief-Plakette vor dunklem Grünverlauf (adaptives Icon, inkl. einfarbiger Variante für
-  „Designte Symbole“ ab Android 13)
-- **Statusleisten-Icon:** Fuchskopf-Silhouette mit Brief-Plakette für Benachrichtigungen (neue Nachrichten, Push-Dienst usw.)
+- **App-Icon:** Metall-Fuchs mit Briefumschlag und @-Schloss auf gebürsteter Metallplatte (adaptives Icon, inkl.
+  einfarbiger Variante für „Designte Symbole“ ab Android 13)
+- **Statusleisten-Icon:** Fuchs-Linienzeichnung mit @ für Benachrichtigungen (neue Nachrichten, Push-Dienst usw.)
 - **Eingebaute PGP-Verschlüsselung** – ohne Zusatz-App wie OpenKeychain, siehe unten
 - **Posteingang wechseln per Tipp auf den Titel:** Ein Tipp auf „Posteingang“ oben in der Nachrichtenliste schaltet
   der Reihe nach durch – gemeinsamer Posteingang (falls aktiviert) → Posteingang Konto 1 → Konto 2 → … → wieder von
@@ -114,8 +114,8 @@ Dateien, damit Merges möglichst konfliktfrei bleiben:
 
 - Farben: `app-k9mail/src/main/res/values/mailfox_theme_colors.xml` und
   `app-k9mail/src/main/kotlin/app/k9mail/provider/MailFoxThemeColors.kt` (erzeugt mit `docs/mailfox/theme_colors.mjs`)
-- Icons: `app-k9mail/src/main/res/drawable*/` (erzeugt mit
-  `python3 docs/mailfox/icon/android.py app-k9mail/src/main/res components/ui/bolt/src/commonMain/composeResources/drawable/bolt_k9mail_logo.xml`)
+- Icons: `app-k9mail/src/main/res/mipmap-*/` und `drawable*/` (erzeugt aus dem Entwurf, siehe
+  `docs/mailfox/icon/README.md`)
 - Posteingang-Wechsel: `legacy/ui/legacy/src/main/java/com/fsck/k9/activity/InboxCycler.kt` und `MessageHomeActivity.kt`
 
 ## Bauen
