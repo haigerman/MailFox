@@ -11,6 +11,7 @@ import net.thunderbird.feature.funding.api.FundingSettings
 import net.thunderbird.feature.funding.featureFundingModule
 import net.thunderbird.feature.mail.message.list.internal.featureMessageListModule
 import net.thunderbird.feature.mail.message.reader.api.css.CssClassNameProvider
+import net.thunderbird.feature.mailfox.pgp.internal.featureMailFoxPgpModule
 import net.thunderbird.feature.thundermail.thunderbird.inject.featureThundermailModule
 import org.koin.dsl.module
 
@@ -23,6 +24,7 @@ val featureModule = module {
     includes(featureMessageListModule)
     includes(featureThundermailModule)
     includes(fundingModule)
+    includes(featureMailFoxPgpModule)
 
     single<FundingSettings> {
         K9FundingSettings()

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="mailfox_pgp_settings_title">Set up mail encryption with PGP</string>
+    <string name="mailfox_pgp_settings_intro">MailFox creates a PGP key pair for the account and publishes the public key on keys.openpgp.org so that others can send you encrypted messages. Received encrypted messages are decrypted automatically.</string>
+    <string name="mailfox_pgp_settings_set_up_button">Set up PGP</string>
+    <string name="mailfox_pgp_settings_publish_again_button">Publish again</string>
+    <string name="mailfox_pgp_settings_fingerprint">Fingerprint: %s</string>
+    <string name="mailfox_pgp_settings_status_active">PGP is set up.</string>
+    <string name="mailfox_pgp_settings_status_in_progress">Creating and publishing key…</string>
+    <string name="mailfox_pgp_settings_status_published">Key created and published.</string>
+    <string name="mailfox_pgp_settings_status_verification_pending">Key created. keys.openpgp.org has sent a confirmation email to %s. Please open the link in it so that others can find your key.</string>
+    <string name="mailfox_pgp_settings_status_publish_failed">Key created, but it could not be published (no connection?). Please try \"Publish again\" later.</string>
+    <string name="mailfox_pgp_settings_status_failed">Setup failed.</string>
+</resources>

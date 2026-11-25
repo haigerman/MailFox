@@ -161,6 +161,7 @@ dependencies {
     implementation(projects.core.ui.compose.common)
     implementation(projects.core.ui.legacy.theme2.k9mail)
     implementation(projects.feature.launcher)
+    implementation(projects.feature.mailfox.pgp.internal)
     implementation(projects.feature.mail.message.list.api)
     implementation(projects.feature.mail.message.list.internal)
     implementation(projects.feature.mail.message.reader.api)

@@ -59,6 +59,13 @@ class DependencyInjectionTest {
                 Resources::class,
                 Storage::class,
                 ConfigId::class,
+                // MailFox: plain values passed to the PGP classes
+                java.io.File::class,
+                String::class,
+                kotlinx.coroutines.CoroutineDispatcher::class,
+                Function0::class,
+                Function1::class,
+                okhttp3.OkHttpClient::class,
             ),
             injections = injectedParameters(
                 definition<AccountRemoverWorker>(WorkerParameters::class),

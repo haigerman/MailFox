@@ -317,6 +317,9 @@ org.apache.httpcomponents.core5:httpcore5-h2:5.4.3
 org.apache.httpcomponents.core5:httpcore5:5.4.3
 org.apache.james:apache-mime4j-core:0.8.15
 org.apache.james:apache-mime4j-dom:0.8.15
+org.bouncycastle:bcpg-jdk18on:1.82
+org.bouncycastle:bcprov-jdk18on:1.82
+org.bouncycastle:bcutil-jdk18on:1.82
 org.checkerframework:checker-qual:3.43.0
 org.jetbrains.androidx.lifecycle:lifecycle-common-jvm:2.11.0
 org.jetbrains.androidx.lifecycle:lifecycle-common:2.11.0
@@ -416,4 +419,5 @@ org.minidns:minidns-core:1.1.1
 org.minidns:minidns-dnssec:1.1.1
 org.minidns:minidns-hla:1.1.1
 org.minidns:minidns-iterative-resolver:1.1.1
+org.pgpainless:pgpainless-core:1.7.8
 org.slf4j:slf4j-api:2.0.19

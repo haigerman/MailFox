@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <application>
+
+        <!-- MailFox: built-in OpenPGP provider. K-9's message view uses it to decrypt and verify messages. -->
+        <service
+            android:name="net.thunderbird.feature.mailfox.pgp.internal.provider.MailFoxOpenPgpService"
+            android:exported="false"
+            >
+            <intent-filter>
+                <action android:name="org.openintents.openpgp.IOpenPgpService2" />
+            </intent-filter>
+        </service>
+
+        <activity
+            android:name="net.thunderbird.feature.mailfox.pgp.internal.settings.PgpSettingsActivity"
+            android:exported="false"
+            android:label="@string/mailfox_pgp_settings_title"
+            />
+
+    </application>
+</manifest>

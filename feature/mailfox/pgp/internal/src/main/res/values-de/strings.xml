@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="mailfox_pgp_settings_title">Mailverschlüsselung mit PGP einrichten</string>
+    <string name="mailfox_pgp_settings_intro">MailFox erzeugt für das Konto ein PGP-Schlüsselpaar und veröffentlicht den öffentlichen Schlüssel auf keys.openpgp.org, damit andere dir verschlüsselte Nachrichten schicken können. Empfangene verschlüsselte Nachrichten werden automatisch entschlüsselt.</string>
+    <string name="mailfox_pgp_settings_set_up_button">PGP einrichten</string>
+    <string name="mailfox_pgp_settings_publish_again_button">Erneut veröffentlichen</string>
+    <string name="mailfox_pgp_settings_fingerprint">Fingerabdruck: %s</string>
+    <string name="mailfox_pgp_settings_status_active">PGP ist eingerichtet.</string>
+    <string name="mailfox_pgp_settings_status_in_progress">Schlüssel wird erzeugt und veröffentlicht …</string>
+    <string name="mailfox_pgp_settings_status_published">Schlüssel erzeugt und veröffentlicht.</string>
+    <string name="mailfox_pgp_settings_status_verification_pending">Schlüssel erzeugt. keys.openpgp.org hat eine Bestätigungs-Mail an %s geschickt. Bitte öffne den Link darin, damit andere deinen Schlüssel finden.</string>
+    <string name="mailfox_pgp_settings_status_publish_failed">Schlüssel erzeugt, konnte aber nicht veröffentlicht werden (keine Verbindung?). Bitte später „Erneut veröffentlichen“ antippen.</string>
+    <string name="mailfox_pgp_settings_status_failed">Einrichtung fehlgeschlagen.</string>
+</resources>

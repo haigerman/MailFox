@@ -323,4 +323,10 @@ check(JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_21)) {
     """.trimIndent()
 }
 include(":feature:changelog:internal")
+
+// MailFox: built-in OpenPGP encryption
+include(
+    ":feature:mailfox:pgp:api",
+    ":feature:mailfox:pgp:internal",
+)
 include(":feature:funding:common")

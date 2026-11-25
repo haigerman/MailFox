@@ -115,6 +115,8 @@ moshi = "1.15.2"
 mozillaAndroidComponents = "145.0.1"
 jsonSchemaValidator = "3.0.7"
 okhttp = "5.5.1"
+# MailFox: OpenPGP implementation
+pgpainless = "1.7.8"
 okio = "3.18.2"
 preferencesFix = "1.1.0"
 robolectric = "4.17"
@@ -306,6 +308,7 @@ mozilla-components-glean = { module = "org.mozilla.components:service-glean", ve
 mozilla-components-fetch-okhttp = { module = "org.mozilla.components:lib-fetch-okhttp", version.ref = "mozillaAndroidComponents" }
 networknt-jsonSchemaValidator = { module = "com.networknt:json-schema-validator", version.ref = "jsonSchemaValidator" }
 okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
+pgpainless-core = { module = "org.pgpainless:pgpainless-core", version.ref = "pgpainless" }
 okhttp-mockwebserver = { module = "com.squareup.okhttp3:mockwebserver", version.ref = "okhttp" }
 okio = { module = "com.squareup.okio:okio", version.ref = "okio" }
 preferencex = { module = "com.takisoft.preferencex:preferencex", version.ref = "preferencesFix" }
