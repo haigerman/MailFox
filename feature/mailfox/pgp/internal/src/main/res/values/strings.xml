@@ -22,4 +22,15 @@
     <string name="mailfox_pgp_export_status_in_progress">Exporting key…</string>
     <string name="mailfox_pgp_export_status_done">Private key exported.</string>
     <string name="mailfox_pgp_export_status_failed">Export failed.</string>
+    <string name="mailfox_pgp_import_button">Import key</string>
+    <string name="mailfox_pgp_import_dialog_title">Import key</string>
+    <string name="mailfox_pgp_import_dialog_text">The key is protected with a password. Please enter the password that was used when exporting the key.</string>
+    <string name="mailfox_pgp_import_dialog_confirm">Import</string>
+    <string name="mailfox_pgp_import_error_wrong_passphrase">Wrong password.</string>
+    <string name="mailfox_pgp_import_status_in_progress">Importing key…</string>
+    <string name="mailfox_pgp_import_status_done">Key imported. A previous key is kept to read older messages. Use \"Publish again\" if others should find the imported key.</string>
+    <string name="mailfox_pgp_import_status_no_secret_key">The file doesn\'t contain a private key.</string>
+    <string name="mailfox_pgp_import_status_wrong_email_address">The key doesn\'t belong to the email address of this account.</string>
+    <string name="mailfox_pgp_import_status_key_not_usable">The key can\'t be used (revoked, expired or not suitable for encryption).</string>
+    <string name="mailfox_pgp_import_status_failed">Import failed.</string>
 </resources>

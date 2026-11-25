@@ -27,6 +27,29 @@ class PgpKeyStoreTest {
     }
 
     @Test
+    fun `replacing a key should keep the previous key for decryption`() {
+        val oldKey = PgpCrypto.generateKey("Bob", "bob@example.org")
+        val newKey = PgpCrypto.generateKey("Bob", "bob@example.org")
+
+        testSubject.saveSecretKey(ACCOUNT_UUID, oldKey)
+        testSubject.saveSecretKey(ACCOUNT_UUID, newKey)
+
+        assertThat(testSubject.getSecretKey(ACCOUNT_UUID)?.publicKey?.keyID).isEqualTo(newKey.publicKey.keyID)
+        assertThat(testSubject.getAllSecretKeys().map { it.publicKey.keyID }.toSet())
+            .isEqualTo(setOf(oldKey.publicKey.keyID, newKey.publicKey.keyID))
+    }
+
+    @Test
+    fun `saving the same key again should not create a copy`() {
+        val key = PgpCrypto.generateKey("Bob", "bob@example.org")
+
+        testSubject.saveSecretKey(ACCOUNT_UUID, key)
+        testSubject.saveSecretKey(ACCOUNT_UUID, key)
+
+        assertThat(testSubject.getAllSecretKeys()).hasSize(1)
+    }
+
+    @Test
     fun `getSecretKey should return null for unknown account`() {
         assertThat(testSubject.getSecretKey(ACCOUNT_UUID)).isNull()
     }

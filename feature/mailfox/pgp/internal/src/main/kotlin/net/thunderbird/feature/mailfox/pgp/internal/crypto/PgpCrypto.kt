@@ -66,6 +66,37 @@ internal object PgpCrypto {
 
     fun armorSecretKey(secretKeyRing: PGPSecretKeyRing): String = PGPainless.asciiArmor(secretKeyRing)
 
+    fun isPassphraseProtected(secretKeyRing: PGPSecretKeyRing): Boolean {
+        return !PGPainless.inspectKeyRing(secretKeyRing).isFullyDecrypted
+    }
+
+    /**
+     * Returns a copy of [secretKeyRing] without passphrase protection.
+     *
+     * @throws org.bouncycastle.openpgp.PGPException if [passphrase] is wrong.
+     */
+    fun removePassphrase(secretKeyRing: PGPSecretKeyRing, passphrase: CharArray): PGPSecretKeyRing {
+        val oldPassphrase = Passphrase(passphrase.copyOf())
+        try {
+            return PGPainless.modifyKeyRing(secretKeyRing)
+                .changePassphraseFromOldPassphrase(oldPassphrase)
+                .withSecureDefaultSettings()
+                .toNoPassphrase()
+                .done()
+        } finally {
+            oldPassphrase.clear()
+        }
+    }
+
+    /**
+     * Returns `true` if the key can be used to encrypt and sign messages for [emailAddress].
+     */
+    fun isUsableOwnKeyFor(secretKeyRing: PGPSecretKeyRing, emailAddress: String): Boolean {
+        val info = PGPainless.inspectKeyRing(secretKeyRing)
+        return info.isUsableForSigning &&
+            isUsableFor(extractCertificate(secretKeyRing), emailAddress)
+    }
+
     fun readSecretKeyRing(data: ByteArray): PGPSecretKeyRing? {
         return runCatching { PGPainless.readKeyRing().secretKeyRing(data) }.getOrNull()
     }

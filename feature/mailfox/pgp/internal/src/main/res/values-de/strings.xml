@@ -22,4 +22,15 @@
     <string name="mailfox_pgp_export_status_in_progress">Schlüssel wird exportiert …</string>
     <string name="mailfox_pgp_export_status_done">Privater Schlüssel exportiert.</string>
     <string name="mailfox_pgp_export_status_failed">Export fehlgeschlagen.</string>
+    <string name="mailfox_pgp_import_button">Schlüssel importieren</string>
+    <string name="mailfox_pgp_import_dialog_title">Schlüssel importieren</string>
+    <string name="mailfox_pgp_import_dialog_text">Der Schlüssel ist mit einem Passwort geschützt. Bitte gib das Passwort ein, das beim Exportieren vergeben wurde.</string>
+    <string name="mailfox_pgp_import_dialog_confirm">Importieren</string>
+    <string name="mailfox_pgp_import_error_wrong_passphrase">Falsches Passwort.</string>
+    <string name="mailfox_pgp_import_status_in_progress">Schlüssel wird importiert …</string>
+    <string name="mailfox_pgp_import_status_done">Schlüssel importiert. Ein bisheriger Schlüssel bleibt zum Lesen älterer Nachrichten erhalten. Tippe auf „Erneut veröffentlichen“, wenn andere den importierten Schlüssel finden sollen.</string>
+    <string name="mailfox_pgp_import_status_no_secret_key">Die Datei enthält keinen privaten Schlüssel.</string>
+    <string name="mailfox_pgp_import_status_wrong_email_address">Der Schlüssel gehört nicht zur E-Mail-Adresse dieses Kontos.</string>
+    <string name="mailfox_pgp_import_status_key_not_usable">Der Schlüssel ist nicht nutzbar (widerrufen, abgelaufen oder nicht zum Verschlüsseln geeignet).</string>
+    <string name="mailfox_pgp_import_status_failed">Import fehlgeschlagen.</string>
 </resources>

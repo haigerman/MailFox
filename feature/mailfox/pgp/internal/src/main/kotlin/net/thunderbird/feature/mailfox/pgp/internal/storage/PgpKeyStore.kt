@@ -28,10 +28,15 @@ internal class PgpKeyStore(
     @Synchronized
     fun hasSecretKey(accountUuid: String): Boolean = secretKeyFile(accountUuid).exists()
 
+    /**
+     * Stores the account's key. A different previous key is kept (see [getAllSecretKeys]) so that messages encrypted to
+     * it can still be decrypted.
+     */
     @Synchronized
     fun saveSecretKey(accountUuid: String, secretKeyRing: PGPSecretKeyRing) {
         accountsDirectory.mkdirs()
         val file = secretKeyFile(accountUuid)
+        archivePreviousKey(accountUuid, newKeyId = secretKeyRing.publicKey.keyID)
         val tempFile = File(file.path + ".tmp")
         tempFile.writeBytes(cipher.encrypt(secretKeyRing.encoded))
         if (!tempFile.renameTo(file)) {
@@ -40,6 +45,20 @@ internal class PgpKeyStore(
         }
     }
 
+    private fun archivePreviousKey(accountUuid: String, newKeyId: Long) {
+        val file = secretKeyFile(accountUuid)
+        if (!file.exists()) return
+
+        val previousKey = runCatching { PgpCrypto.readSecretKeyRing(cipher.decrypt(file.readBytes())) }.getOrNull()
+        if (previousKey != null && previousKey.publicKey.keyID != newKeyId) {
+            val fingerprint = PgpCrypto.fingerprint(PgpCrypto.extractCertificate(previousKey))
+            file.renameTo(File(accountsDirectory, "$accountUuid.$fingerprint$SECRET_KEY_SUFFIX"))
+        }
+    }
+
+    /**
+     * Returns all secret keys, including previous keys of the accounts. Used for decryption.
+     */
     @Synchronized
     fun getAllSecretKeys(): List<PGPSecretKeyRing> {
         val files = accountsDirectory.listFiles { file -> file.name.endsWith(SECRET_KEY_SUFFIX) }.orEmpty()

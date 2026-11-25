@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import net.thunderbird.feature.mailfox.pgp.internal.PgpAccountSetup
+import net.thunderbird.feature.mailfox.pgp.internal.PgpImportResult
 import net.thunderbird.feature.mailfox.pgp.internal.PgpKeyExporter
 import net.thunderbird.feature.mailfox.pgp.internal.PgpSetupResult
 import net.thunderbird.feature.mailfox.pgp.internal.keyserver.PublishStatus
@@ -20,6 +21,7 @@ internal data class PgpSettingsState(
     val isLoading: Boolean = true,
     val accounts: List<PgpAccountItem> = emptyList(),
     val exportDialog: PgpExportDialogState? = null,
+    val importDialog: PgpImportDialogState? = null,
 )
 
 internal data class PgpAccountItem(
@@ -29,7 +31,24 @@ internal data class PgpAccountItem(
     val fingerprint: String?,
     val status: PgpSetupStatus = PgpSetupStatus.Idle,
     val exportStatus: PgpExportStatus = PgpExportStatus.None,
+    val importStatus: PgpImportStatus = PgpImportStatus.None,
 )
+
+internal data class PgpImportDialogState(
+    val accountUuid: String,
+    val passphrase: String = "",
+    val isWrongPassphrase: Boolean = false,
+)
+
+internal enum class PgpImportStatus {
+    None,
+    InProgress,
+    Done,
+    NoSecretKey,
+    WrongEmailAddress,
+    KeyNotUsable,
+    Failed,
+}
 
 internal data class PgpExportDialogState(
     val accountUuid: String,
@@ -67,17 +86,26 @@ internal sealed interface PgpSettingsEvent {
     data object ExportConfirmed : PgpSettingsEvent
     data object ExportDialogDismissed : PgpSettingsEvent
     data class ExportFileSelected(val uri: Uri?) : PgpSettingsEvent
+    data class ImportClicked(val accountUuid: String) : PgpSettingsEvent
+    data class ImportFileSelected(val uri: Uri?) : PgpSettingsEvent
+    data class ImportPassphraseChanged(val passphrase: String) : PgpSettingsEvent
+    data object ImportConfirmed : PgpSettingsEvent
+    data object ImportDialogDismissed : PgpSettingsEvent
 }
 
 internal sealed interface PgpSettingsEffect {
     /** Ask the user where to save the exported key. */
     data class CreateExportFile(val fileName: String) : PgpSettingsEffect
+
+    /** Ask the user for the key file to import. */
+    data object OpenImportFile : PgpSettingsEffect
 }
 
+@Suppress("TooManyFunctions")
 internal class PgpSettingsViewModel(
     private val accountSetup: PgpAccountSetup,
     private val keyExporter: PgpKeyExporter,
-    private val fileWriter: PgpKeyFileWriter,
+    private val keyFiles: PgpKeyFiles,
 ) : ViewModel() {
     private val _state = MutableStateFlow(PgpSettingsState())
     val state: StateFlow<PgpSettingsState> = _state.asStateFlow()
@@ -87,6 +115,12 @@ internal class PgpSettingsViewModel(
 
     /** Account and passphrase of an export waiting for the user to pick a file. */
     private var pendingExport: Pair<String, CharArray>? = null
+
+    /** Account for which the user is picking a key file. */
+    private var pendingImportAccountUuid: String? = null
+
+    /** Key file waiting for its passphrase. */
+    private var pendingImport: Pair<String, ByteArray>? = null
 
     init {
         viewModelScope.launch {
@@ -119,6 +153,26 @@ internal class PgpSettingsViewModel(
             PgpSettingsEvent.ExportDialogDismissed -> _state.update { it.copy(exportDialog = null) }
 
             is PgpSettingsEvent.ExportFileSelected -> exportToFile(event.uri)
+
+            is PgpSettingsEvent.ImportClicked -> {
+                pendingImportAccountUuid = event.accountUuid
+                _effects.trySend(PgpSettingsEffect.OpenImportFile)
+            }
+
+            is PgpSettingsEvent.ImportFileSelected -> importFromFile(event.uri)
+
+            is PgpSettingsEvent.ImportPassphraseChanged -> _state.update { state ->
+                state.copy(
+                    importDialog = state.importDialog?.copy(passphrase = event.passphrase, isWrongPassphrase = false),
+                )
+            }
+
+            PgpSettingsEvent.ImportConfirmed -> confirmImport()
+
+            PgpSettingsEvent.ImportDialogDismissed -> {
+                pendingImport = null
+                _state.update { it.copy(importDialog = null) }
+            }
         }
     }
 
@@ -173,12 +227,75 @@ internal class PgpSettingsViewModel(
         updateAccount(accountUuid) { it.copy(exportStatus = PgpExportStatus.InProgress) }
         viewModelScope.launch {
             val result = runCatching {
-                keyExporter.export(accountUuid, passphrase) { fileWriter.openOutputStream(uri) }
+                keyExporter.export(accountUuid, passphrase) { keyFiles.openOutputStream(uri) }
             }
             passphrase.fill(' ')
             val status = if (result.isSuccess) PgpExportStatus.Done else PgpExportStatus.Failed
             updateAccount(accountUuid) { it.copy(exportStatus = status) }
         }
+    }
+
+    private fun importFromFile(uri: Uri?) {
+        val accountUuid = pendingImportAccountUuid ?: return
+        pendingImportAccountUuid = null
+        if (uri == null) return
+
+        updateAccount(accountUuid) { it.copy(importStatus = PgpImportStatus.InProgress) }
+        viewModelScope.launch {
+            val keyData = runCatching { keyFiles.readBytes(uri) }.getOrNull()
+            if (keyData == null) {
+                updateAccount(accountUuid) { it.copy(importStatus = PgpImportStatus.Failed) }
+            } else {
+                runImport(accountUuid, keyData, passphrase = null)
+            }
+        }
+    }
+
+    private fun confirmImport() {
+        val (accountUuid, keyData) = pendingImport ?: return
+        val passphrase = _state.value.importDialog?.passphrase?.toCharArray() ?: return
+
+        viewModelScope.launch {
+            runImport(accountUuid, keyData, passphrase)
+            passphrase.fill(' ')
+        }
+    }
+
+    private suspend fun runImport(accountUuid: String, keyData: ByteArray, passphrase: CharArray?) {
+        val result = runCatching { accountSetup.importKey(accountUuid, keyData, passphrase) }.getOrNull()
+        when (result) {
+            PgpImportResult.PassphraseRequired -> {
+                pendingImport = accountUuid to keyData
+                updateAccount(accountUuid) { it.copy(importStatus = PgpImportStatus.None) }
+                _state.update { it.copy(importDialog = PgpImportDialogState(accountUuid)) }
+            }
+
+            PgpImportResult.WrongPassphrase -> _state.update { state ->
+                state.copy(importDialog = state.importDialog?.copy(isWrongPassphrase = true))
+            }
+
+            else -> {
+                pendingImport = null
+                _state.update { it.copy(importDialog = null) }
+                updateAccount(accountUuid) { account -> account.withImportResult(result) }
+            }
+        }
+    }
+
+    private fun PgpAccountItem.withImportResult(result: PgpImportResult?): PgpAccountItem = when (result) {
+        is PgpImportResult.Success -> copy(
+            fingerprint = result.fingerprint,
+            status = PgpSetupStatus.Idle,
+            importStatus = PgpImportStatus.Done,
+        )
+
+        PgpImportResult.NoSecretKey -> copy(importStatus = PgpImportStatus.NoSecretKey)
+
+        PgpImportResult.WrongEmailAddress -> copy(importStatus = PgpImportStatus.WrongEmailAddress)
+
+        PgpImportResult.KeyNotUsable -> copy(importStatus = PgpImportStatus.KeyNotUsable)
+
+        else -> copy(importStatus = PgpImportStatus.Failed)
     }
 
     private fun clearPendingExport() {

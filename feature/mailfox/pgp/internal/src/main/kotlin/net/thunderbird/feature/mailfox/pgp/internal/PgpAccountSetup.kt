@@ -30,6 +30,7 @@ internal class PgpAccountSetup(
     private val accountManager: LegacyAccountDtoManager,
     private val keyStore: PgpKeyStore,
     private val keyServerClient: KeyServerClient,
+    private val keyImporter: PgpKeyImporter,
     private val openPgpProviderPackageName: String,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) {
@@ -58,6 +59,20 @@ internal class PgpAccountSetup(
             .getOrNull()
 
         PgpSetupResult.Success(fingerprint = PgpCrypto.fingerprint(certificate), publishStatus = publishStatus)
+    }
+
+    /**
+     * Imports a secret key for the account. See [PgpKeyImporter].
+     */
+    suspend fun importKey(accountUuid: String, keyData: ByteArray, passphrase: CharArray?): PgpImportResult {
+        val account = withContext(ioDispatcher) { accountManager.getAccount(accountUuid) }
+            ?: return PgpImportResult.NoSecretKey
+
+        val result = keyImporter.import(accountUuid, account.email, keyData, passphrase)
+        if (result is PgpImportResult.Success) {
+            withContext(ioDispatcher) { useMailFoxAsOpenPgpProvider(account, result.keyId) }
+        }
+        return result
     }
 
     private fun useMailFoxAsOpenPgpProvider(account: LegacyAccountDto, keyId: Long) {

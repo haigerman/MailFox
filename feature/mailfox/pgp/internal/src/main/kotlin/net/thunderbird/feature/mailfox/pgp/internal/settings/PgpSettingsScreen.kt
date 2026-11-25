@@ -44,16 +44,25 @@ internal fun PgpSettingsScreen(
         ActivityResultContracts.CreateDocument(EXPORT_MIME_TYPE),
     ) { uri -> viewModel.event(PgpSettingsEvent.ExportFileSelected(uri)) }
 
+    val openImportFile = rememberLauncherForActivityResult(
+        ActivityResultContracts.OpenDocument(),
+    ) { uri -> viewModel.event(PgpSettingsEvent.ImportFileSelected(uri)) }
+
     LaunchedEffect(viewModel) {
         viewModel.effects.collect { effect ->
             when (effect) {
                 is PgpSettingsEffect.CreateExportFile -> createExportFile.launch(effect.fileName)
+                PgpSettingsEffect.OpenImportFile -> openImportFile.launch(arrayOf("*/*"))
             }
         }
     }
 
     state.exportDialog?.let { dialog ->
         PgpExportDialog(dialog = dialog, onEvent = viewModel::event)
+    }
+
+    state.importDialog?.let { dialog ->
+        PgpImportDialog(dialog = dialog, onEvent = viewModel::event)
     }
 
     Scaffold(
@@ -82,6 +91,7 @@ internal fun PgpSettingsScreen(
                     account = account,
                     onSetUpClick = { viewModel.event(PgpSettingsEvent.SetUpClicked(account.accountUuid)) },
                     onExportClick = { viewModel.event(PgpSettingsEvent.ExportClicked(account.accountUuid)) },
+                    onImportClick = { viewModel.event(PgpSettingsEvent.ImportClicked(account.accountUuid)) },
                     modifier = Modifier.padding(horizontal = BoltTheme.spacings.double),
                 )
             }
@@ -94,6 +104,7 @@ private fun PgpAccountCard(
     account: PgpAccountItem,
     onSetUpClick: () -> Unit,
     onExportClick: () -> Unit,
+    onImportClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     CardOutlined(modifier = modifier.fillMaxWidth()) {
@@ -145,8 +156,58 @@ private fun PgpAccountCard(
                 )
                 exportStatusText(account.exportStatus)?.let { TextBodyMedium(text = it) }
             }
+
+            ButtonOutlined(
+                text = stringResource(R.string.mailfox_pgp_import_button),
+                onClick = onImportClick,
+                enabled = account.importStatus != PgpImportStatus.InProgress,
+            )
+            importStatusText(account.importStatus)?.let { TextBodyMedium(text = it) }
         }
     }
+}
+
+@Composable
+private fun PgpImportDialog(
+    dialog: PgpImportDialogState,
+    onEvent: (PgpSettingsEvent) -> Unit,
+) {
+    AlertDialog(
+        title = stringResource(R.string.mailfox_pgp_import_dialog_title),
+        confirmText = stringResource(R.string.mailfox_pgp_import_dialog_confirm),
+        onConfirmClick = { onEvent(PgpSettingsEvent.ImportConfirmed) },
+        onDismissRequest = { onEvent(PgpSettingsEvent.ImportDialogDismissed) },
+        dismissText = stringResource(android.R.string.cancel),
+        onDismissClick = { onEvent(PgpSettingsEvent.ImportDialogDismissed) },
+    ) {
+        Column(verticalArrangement = Arrangement.spacedBy(BoltTheme.spacings.default)) {
+            TextBodyMedium(text = stringResource(R.string.mailfox_pgp_import_dialog_text))
+            TextFieldOutlinedPassword(
+                value = dialog.passphrase,
+                onValueChange = { onEvent(PgpSettingsEvent.ImportPassphraseChanged(it)) },
+                label = stringResource(R.string.mailfox_pgp_export_passphrase_label),
+                hasError = dialog.isWrongPassphrase,
+                modifier = Modifier.fillMaxWidth(),
+            )
+            if (dialog.isWrongPassphrase) {
+                TextBodySmall(
+                    text = stringResource(R.string.mailfox_pgp_import_error_wrong_passphrase),
+                    color = BoltTheme.colors.error,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun importStatusText(status: PgpImportStatus): String? = when (status) {
+    PgpImportStatus.None -> null
+    PgpImportStatus.InProgress -> stringResource(R.string.mailfox_pgp_import_status_in_progress)
+    PgpImportStatus.Done -> stringResource(R.string.mailfox_pgp_import_status_done)
+    PgpImportStatus.NoSecretKey -> stringResource(R.string.mailfox_pgp_import_status_no_secret_key)
+    PgpImportStatus.WrongEmailAddress -> stringResource(R.string.mailfox_pgp_import_status_wrong_email_address)
+    PgpImportStatus.KeyNotUsable -> stringResource(R.string.mailfox_pgp_import_status_key_not_usable)
+    PgpImportStatus.Failed -> stringResource(R.string.mailfox_pgp_import_status_failed)
 }
 
 @Composable
