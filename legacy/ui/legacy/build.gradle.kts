@@ -4,6 +4,9 @@ plugins {
 }
 
 dependencies {
+    // MailFox: built-in PGP encryption
+    implementation(projects.feature.mailfox.pgp.api)
+
     api(projects.feature.changelog.api)
     api(projects.legacy.ui.base)
     api(projects.core.ui.account)

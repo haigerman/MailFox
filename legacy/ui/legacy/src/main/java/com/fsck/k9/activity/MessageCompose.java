@@ -82,6 +82,10 @@ import app.k9mail.core.android.common.camera.CameraCaptureHandler;
 import com.fsck.k9.activity.compose.ComposeCryptoStatus;
 import com.fsck.k9.activity.compose.ComposeCryptoStatus.SendErrorState;
 import com.fsck.k9.activity.compose.IdentityAdapter;
+import com.fsck.k9.activity.compose.MailFoxEncryptedSend;
+import com.fsck.k9.activity.compose.MailFoxEncryptionRequest;
+import com.fsck.k9.activity.compose.MailFoxPgpMessageBuilder;
+import net.thunderbird.feature.mailfox.pgp.MailFoxPgp;
 import com.fsck.k9.activity.compose.IdentityAdapter.IdentityContainer;
 import com.fsck.k9.activity.compose.PgpEnabledErrorDialog.OnOpenPgpDisableListener;
 import com.fsck.k9.activity.compose.PgpInlineDialog.OnOpenPgpInlineChangeListener;
@@ -238,6 +242,10 @@ public class MessageCompose extends BaseActivity implements OnClickListener,
     private final GeneralSettingsManager generalSettingsManager = DI.get(GeneralSettingsManager.class);
     private final WebViewConfigProvider webViewConfigProvider = DI.get(WebViewConfigProvider.class);
     private final DisplayHtml displayHtml = DI.get(DisplayHtmlUiFactory.class).createForMessageCompose();
+
+    // MailFox: send encrypted with PGP
+    private MailFoxEncryptedSend mailFoxEncryptedSend;
+    private MailFoxEncryptionRequest mailFoxEncryptionRequest;
     private final HtmlSignatureSanitizer htmlSignatureSanitizer = DI.get(HtmlSignatureSanitizer.class);
 
     private final IntentDataMapper indentDataMapper = DI.get(IntentDataMapper.class);
@@ -819,7 +827,12 @@ public class MessageCompose extends BaseActivity implements OnClickListener,
         }
 
         boolean shouldUsePgpMessageBuilder = cryptoStatus.isOpenPgpConfigured();
-        if (shouldUsePgpMessageBuilder) {
+        if (!isDraft && mailFoxEncryptionRequest != null) {
+            // MailFox: send encrypted with the built-in OpenPGP implementation
+            builder = MailFoxPgpMessageBuilder.newInstance(
+                    account.getUuid(), mailFoxEncryptionRequest, account.isOpenPgpEncryptSubject());
+            recipientPresenter.builderSetProperties(builder);
+        } else if (shouldUsePgpMessageBuilder) {
             SendErrorState maybeSendErrorState = cryptoStatus.getSendErrorStateOrNull();
             if (maybeSendErrorState != null) {
                 recipientPresenter.showPgpSendError(maybeSendErrorState);
@@ -880,6 +893,74 @@ public class MessageCompose extends BaseActivity implements OnClickListener,
         }
 
         performSendAfterChecks();
+    }
+
+    /**
+     * MailFox: Replies to encrypted messages contain the decrypted original as quote. Ask before sending them
+     * unencrypted.
+     */
+    private boolean shouldAskToSendReplyEncrypted() {
+        return recipientPresenter.isReplyingToEncryptedMessage() &&
+                getPackageName().equals(account.getOpenPgpProvider());
+    }
+
+    private void askToSendReplyEncrypted() {
+        new MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.mailfox_pgp_reply_to_encrypted_title)
+                .setMessage(R.string.mailfox_pgp_reply_to_encrypted_message)
+                .setPositiveButton(R.string.mailfox_send_encrypted_action,
+                        (dialog, which) -> checkToSendMessageEncrypted())
+                .setNegativeButton(R.string.mailfox_pgp_send_unencrypted, (dialog, which) -> checkToSendMessage())
+                .setNeutralButton(android.R.string.cancel, null)
+                .show();
+    }
+
+    /**
+     * MailFox: Looks up the recipients' PGP keys and sends the message encrypted.
+     */
+    private void checkToSendMessageEncrypted() {
+        if (subjectView.getText().length() == 0 && !alreadyNotifiedUserOfEmptySubject) {
+            Toast.makeText(this, R.string.empty_subject, Toast.LENGTH_LONG).show();
+            alreadyNotifiedUserOfEmptySubject = true;
+            return;
+        }
+
+        if (replyToPresenter.isNotReadyForSending()) {
+            return;
+        }
+
+        if (recipientPresenter.checkRecipientsOkForSending()) {
+            return;
+        }
+
+        if (!attachmentPresenter.isReadyForEncryptedSending()) {
+            Toast.makeText(this, R.string.mailfox_pgp_attachments_loading, Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        if (sendMessageHasBeenTriggered) {
+            return;
+        }
+
+        if (mailFoxEncryptedSend == null) {
+            mailFoxEncryptedSend = new MailFoxEncryptedSend(this, DI.get(MailFoxPgp.class),
+                    new MailFoxEncryptedSend.Callback() {
+                        @Override
+                        public void onSendEncrypted(@NonNull MailFoxEncryptionRequest request) {
+                            mailFoxEncryptionRequest = request;
+                            performSendAfterChecks();
+                        }
+
+                        @Override
+                        public void onSendUnencrypted() {
+                            mailFoxEncryptionRequest = null;
+                            performSendAfterChecks();
+                        }
+                    });
+        }
+
+        mailFoxEncryptedSend.start(recipientPresenter.getToAddresses(), recipientPresenter.getCcAddresses(),
+                recipientPresenter.getBccAddresses());
     }
 
     private void checkToSaveDraftAndSave() {
@@ -1265,7 +1346,14 @@ public class MessageCompose extends BaseActivity implements OnClickListener,
         if (id == android.R.id.home) {
             prepareToFinish(true);
         } else if (id == R.id.send) {
-            checkToSendMessage();
+            mailFoxEncryptionRequest = null;
+            if (shouldAskToSendReplyEncrypted()) {
+                askToSendReplyEncrypted();
+            } else {
+                checkToSendMessage();
+            }
+        } else if (id == R.id.send_encrypted) {
+            checkToSendMessageEncrypted();
         } else if (id == R.id.save) {
             checkToSaveDraftAndSave();
         } else if (id == R.id.discard) {
@@ -1849,8 +1937,9 @@ public class MessageCompose extends BaseActivity implements OnClickListener,
     @Override
     public void onMessageBuildSuccess(MimeMessage message, boolean isDraft) {
         dismissEncryptedMessageProgressIndicator();
-        String plaintextSubject =
-                (currentMessageBuilder instanceof PgpMessageBuilder) ? currentMessageBuilder.getSubject() : null;
+        boolean isEncryptedMessage = currentMessageBuilder instanceof PgpMessageBuilder ||
+                currentMessageBuilder instanceof MailFoxPgpMessageBuilder;
+        String plaintextSubject = isEncryptedMessage ? currentMessageBuilder.getSubject() : null;
 
         if (isDraft) {
             changesMadeSinceLastSave = false;
@@ -1874,6 +1963,7 @@ public class MessageCompose extends BaseActivity implements OnClickListener,
     @Override
     public void onMessageBuildCancel() {
         dismissEncryptedMessageProgressIndicator();
+        mailFoxEncryptionRequest = null;
         sendMessageHasBeenTriggered = false;
         currentMessageBuilder = null;
         setProgressBarIndeterminateVisibility(false);
@@ -1882,6 +1972,7 @@ public class MessageCompose extends BaseActivity implements OnClickListener,
     @Override
     public void onMessageBuildException(MessagingException me) {
         dismissEncryptedMessageProgressIndicator();
+        mailFoxEncryptionRequest = null;
         Log.e(me, "Error sending message");
         Toast.makeText(MessageCompose.this,
                 getString(R.string.send_failed_reason, me.getLocalizedMessage()), Toast.LENGTH_LONG).show();

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- MailFox: built-in PGP encryption -->
+<resources>
+    <string name="mailfox_send_encrypted_action">Send encrypted</string>
+    <string name="mailfox_pgp_searching_keys">Searching for the recipients\' PGP keys…</string>
+    <string name="mailfox_pgp_missing_keys_title">No PGP key found</string>
+    <string name="mailfox_pgp_missing_keys_message">There is no PGP key for the following recipients, so the message can\'t be encrypted:\n\n%s</string>
+    <string name="mailfox_pgp_lookup_failed">%s (key search failed – no connection?)</string>
+    <string name="mailfox_pgp_send_unencrypted">Send unencrypted</string>
+    <string name="mailfox_pgp_attachments_loading">Please wait until all attachments have been loaded.</string>
+    <string name="mailfox_pgp_settings_category">Mail encryption</string>
+    <string name="mailfox_pgp_settings_action">Set up mail encryption with PGP</string>
+    <string name="mailfox_pgp_reply_to_encrypted_title">Reply to an encrypted message</string>
+    <string name="mailfox_pgp_reply_to_encrypted_message">The original message was encrypted. Do you want to send the reply encrypted as well?</string>
+</resources>

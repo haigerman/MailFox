@@ -9,6 +9,13 @@
         android:icon="@drawable/ic_attachment"
         app:showAsAction="always"
         />
+    <!-- MailFox: send encrypted with PGP -->
+    <item
+        android:id="@+id/send_encrypted"
+        android:title="@string/mailfox_send_encrypted_action"
+        android:icon="@drawable/ic_send_encrypted"
+        app:showAsAction="always"
+        />
     <item
         android:id="@+id/send"
         android:title="@string/send_action"

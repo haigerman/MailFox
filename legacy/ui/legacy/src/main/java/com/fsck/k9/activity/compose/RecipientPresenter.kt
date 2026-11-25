@@ -72,6 +72,10 @@ class RecipientPresenter(
     private var hasContactPicker: Boolean? = null
     private var isReplyToEncryptedMessage = false
 
+    /** MailFox: `true` when replying to an encrypted message. */
+    val isReplyingToEncryptedMessage: Boolean
+        get() = isReplyToEncryptedMessage
+
     private var lastFocusedType = RecipientType.TO
     private var currentCryptoMode = CryptoMode.NO_CHOICE
     private var forceShowCcBcc: Boolean = false
@@ -287,7 +291,7 @@ class RecipientPresenter(
         this.alwaysBccAddresses = alwaysBccAddresses
         if (alwaysBccAddresses.isEmpty()) return
 
-        object : RecipientLoader(context, account.openPgpProvider, *alwaysBccAddresses) {
+        object : RecipientLoader(context, composeOpenPgpProvider, *alwaysBccAddresses) {
             override fun deliverResult(result: List<Recipient>?) {
                 val recipientArray = result!!.toTypedArray()
                 recipientMvpView.silentlyAddBccAddresses(*recipientArray)
@@ -345,10 +349,18 @@ class RecipientPresenter(
         removeAlwaysBcc()
         addAlwaysBcc()
 
-        val openPgpProvider = account.openPgpProvider
+        val openPgpProvider = composeOpenPgpProvider
         recipientMvpView.setCryptoProvider(openPgpProvider)
         openPgpApiManager.setOpenPgpProvider(openPgpProvider, openPgpCallback)
     }
+
+    /**
+     * MailFox: When MailFox itself is the account's OpenPGP provider (built-in PGP), it is only used to decrypt
+     * received messages. Encrypted messages are sent with the separate "send encrypted" action, so K-9's crypto UI
+     * in the compose screen stays disabled.
+     */
+    private val composeOpenPgpProvider: String?
+        get() = account.openPgpProvider.takeUnless { it == context.packageName }
 
     fun onSwitchIdentity() {
         // TODO decide what actually to do on identity switch?
@@ -497,7 +509,7 @@ class RecipientPresenter(
     }
 
     private fun addRecipientsFromAddresses(recipientType: RecipientType, vararg addresses: Address) {
-        object : RecipientLoader(context, account.openPgpProvider, *addresses) {
+        object : RecipientLoader(context, composeOpenPgpProvider, *addresses) {
             override fun deliverResult(result: List<Recipient>?) {
                 val recipientArray = result!!.toTypedArray()
                 recipientMvpView.silentlyAddRecipients(recipientType, *recipientArray)
@@ -509,7 +521,7 @@ class RecipientPresenter(
     }
 
     private fun addRecipientFromContactUri(recipientType: RecipientType, uri: Uri?) {
-        object : RecipientLoader(context, account.openPgpProvider, uri, false) {
+        object : RecipientLoader(context, composeOpenPgpProvider, uri, false) {
             override fun deliverResult(result: List<Recipient>?) {
                 // TODO handle multiple available mail addresses for a contact?
                 if (result!!.isEmpty()) {

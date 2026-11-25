@@ -120,6 +120,23 @@ public class AttachmentPresenter {
         return false;
     }
 
+    /**
+     * MailFox: Like {@link #checkOkForSendingOrDraftSaving(WaitingAction)}, but doesn't automatically send the message
+     * once all attachments are available. Used for sending encrypted messages.
+     */
+    public boolean isReadyForEncryptedSending() {
+        if (actionToPerformAfterWaiting != WaitingAction.NONE) {
+            return false;
+        }
+
+        if (completeMessageDownload == CompleteMessageDownload.FAILED) {
+            completeMessageDownload = CompleteMessageDownload.IN_PROGRESS;
+            attachmentMvpView.downloadCompleteMessage();
+        }
+
+        return completeMessageDownload != CompleteMessageDownload.IN_PROGRESS && !hasLoadingAttachments();
+    }
+
     private boolean hasLoadingAttachments() {
         for (Attachment attachment : attachments.values()) {
             Loader loader = loaderManager.getLoader(attachment.loaderId);
