@@ -49,6 +49,11 @@ Mailverschlüsselung mit PGP einrichten → „Privaten Schlüssel exportieren�
 (`.asc`) speichern, z. B. in der Cloud oder auf dem PC. Die Datei kann in Thunderbird, OpenKeychain oder GnuPG
 importiert werden. Ohne Sicherung lassen sich verschlüsselte Nachrichten nach einem Geräteverlust nicht mehr lesen.
 
+**Schlüssel importieren:** Mit „Schlüssel importieren“ lässt sich ein privater Schlüssel aus einer Datei übernehmen –
+z. B. die MailFox-Sicherung auf einem neuen Gerät oder ein Schlüssel aus Thunderbird, OpenKeychain oder GnuPG.
+Passwortgeschützte Schlüssel werden mit dem Passwort entsperrt. Der Schlüssel muss zur E-Mail-Adresse des Kontos
+gehören. Ein bisheriger Schlüssel des Kontos bleibt erhalten, damit ältere Nachrichten lesbar bleiben.
+
 ## Installation und Updates
 
 Fertige, signierte APKs liegen unter [Releases](https://github.com/haigerman/mailfox/releases).
